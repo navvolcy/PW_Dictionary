@@ -15,12 +15,12 @@ async function getPng() {
 
 	passwords.push(password);
 	//Create a for loop to go to different page 
-	for (let i = 0; i < 5; i++) {
-		await page.goto(`https://www.passwordrandom.com/most-popular-passwords/page/${i}`,{waitUntil : 'networkidle0'});
-		await page.waitForSelector('.row')
+	for (let i = 0; i < 50; i++) {
+		await page.goto(`https://www.passwordrandom.com/most-popular-passwords/page/${i}`)
+		await page.waitForSelector("#cntContent_lstMain")
 		let password = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-child(2)'), element => element.textContent))
 		passwords.push(password);
-		//console.log(passwords)
+		
 	}
 	
     await browser.close()//closes the running process
@@ -56,21 +56,20 @@ const mostFrequent = (passwords= [], num = 1) => {
 	})
 	.slice(0,num)
 	return keys
-	//console.log(keys)
 
 }
 
-let processedPWs = {}
 
 
-
-//push the password into an array 
 // array in inside the JSON file
 async function main() {
 	await getPng()
-	mostFrequent(passwords, 10000)
-	//processPasswords()
-	//console.log('main');
+	//mostFrequent(passwords, 10000) stored in keys variable
+	let keys = mostFrequent(passwords, 10000)
+	//storing our JSON object  to a file named mcupws.json
+	let data = JSON.stringify(keys)
+	fs.writeFileSync('mcupws.json', data);
+	
 }
 main()
 
