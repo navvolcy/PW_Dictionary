@@ -15,60 +15,30 @@ async function getPng() {
 
 	passwords.push(password);
 	//Create a for loop to go to different page 
-	for (let i = 0; i < 50; i++) {
+	for (let i = 0; i < 100; i++) {
 		await page.goto(`https://www.passwordrandom.com/most-popular-passwords/page/${i}`)
 		await page.waitForSelector("#cntContent_lstMain")
 		let password = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr td:nth-child(2)'), element => element.textContent))
 		passwords.push(password);
-		
-	}
 	
+	}
     await browser.close()//closes the running process
-	
+	fs.writeFileSync('mcupws.json', JSON.stringify(passwords))
 }
-//get 10,000 of the most used password from site
-//push the password into an array 
-const mostFrequent = (passwords= [], num = 1) => {
-	const map = {}
-	let keys = []
-	for (let i = 0; i < passwords.length; i++){
-		if (map[passwords[i]]) {
-			map[passwords[i]]++
-		}else {
-			map[passwords[i]] = 1
-		}
-	}
-	for (let i in map) {
-		keys.push(i)
-	}
-	keys = keys.sort((a,b) => {
-		if (map[a] === map[b]) {
-
-			if (a > b) {
-				return 1
-			} else {
-				return -1
-			}
-		}
-		else{
-			return map[b] - map[a]
-		}
-	})
-	.slice(0,num)
-	return keys
-
-}
-
+//creat a fliter function
 
 
 // array in inside the JSON file
 async function main() {
 	await getPng()
-	//mostFrequent(passwords, 10000) stored in keys variable
-	let keys = mostFrequent(passwords, 10000)
+	let newData = fs.readFileSync('mcupws.json')
+	console.log(newData.length)
 	//storing our JSON object  to a file named mcupws.json
-	let data = JSON.stringify(keys)
-	fs.writeFileSync('mcupws.json', data);
+	//let data = JSON.stringify(keys)
+	//fs.writeFileSync('mcupws2.json', data);
+	
+	
+
 	
 }
 main()
